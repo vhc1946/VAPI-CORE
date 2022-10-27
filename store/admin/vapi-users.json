@@ -1,0 +1,14 @@
+[
+  {
+    "company":"VHC",
+    "user":"VOGCH",
+    "pswrd":"vogel123",
+    "admin":true
+  },
+  {
+    "company":"VHC",
+    "user":"MURRY",
+    "pswrd":"vogel123",
+    "admin":false
+  }
+]

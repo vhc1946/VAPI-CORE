@@ -1,0 +1,6 @@
+{"_id":"DPsWaooUm0agw8FK"}
+{"user":"VANJE","pswrd":"vogel123","admin":false,"_id":"EA6OquxFy00XadqS"}
+{"user":"VOGCH","pswrd":"vogel321","admin":true,"_id":"GuRDjijDAlI24n3c"}
+{"company":"VHC","user":"VOGCHH","pswrd":"vogel123","admin":false,"apps":["RRQ"],"_id":"hC1lMIpfloIRUGfE"}
+{"user":"VOGGR","pswrd":"vogel321","admin":false,"_id":"v60EYfPGrIvtBEDe"}
+{"$$indexCreated":{"fieldName":"user","unique":true,"sparse":true}}
