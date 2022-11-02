@@ -52,7 +52,9 @@ var servecontrol = (url="",res=null,control='../controllers')=>{
               return resolve({success:true,msg:'Bad Page'});
             }else{//load requested page
               res.writeHead(200,{'Content-Type':'text/html'});
-              res.end(doc,'utf-8');
+              res.write(doc,'utf-8',()=>{
+                res.end();
+              });
               return resolve({success:true,msg:'Good Page'});
             }
           });
