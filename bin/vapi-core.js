@@ -14,7 +14,7 @@ var midware = {
   }
 }
 
-var servebin = (req,res,bin='/bin/gui/')=>{
+var servebin = (req,res,bin='./gui/')=>{
     var contype = '';
 
     if(req.url.match('\.js$')){contype='text/javascript';}
