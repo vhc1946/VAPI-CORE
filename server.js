@@ -47,11 +47,12 @@ var RouteVAPI = (url,res,pak) =>{
       case 'PING':{return resolve({body:"...PING"});}
       //case 'JAPI':{return resolve(japi.GETj2vtable(pak,true));}
       case 'STORE':{return resolve(AppStoreRouter(pak,vstore));}
-      case 'ADMIN':{return resolve(ADMINrouter(task,pak,vstore));}
+      //case 'ADMIN':{return resolve(ADMINrouter(task,pak,vstore));}
       case 'PORTAL':{return resolve(vapi.servecontrol(url,res));}
     }
   });
 }
+
 
 
 http.createServer((req,res)=>{
@@ -59,16 +60,12 @@ http.createServer((req,res)=>{
     url:req.url,
     timein:new Date().getTime()
   });
-
-  if(vapi.servebin(req,res)){} //served a resource
-  else{
-    vapi.corecall(req,res,RouteVAPI).then(
-      result=>{
-        console.log(result);
-        //check res status
-        //end res if needed
-        vapilogger.LOGrequestend(reqlog); //log the end of the request
-      }
-    );
-  }
+  vapi.corecall(req,res,RouteVAPI).then(
+    result=>{
+      console.log(result);
+      //check res status
+      //end res if needed
+      vapilogger.LOGrequestend(reqlog); //log the end of the request
+    }
+  );
 }).listen(port);

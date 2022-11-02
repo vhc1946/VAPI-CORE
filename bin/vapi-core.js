@@ -14,34 +14,34 @@ var midware = {
   }
 }
 
-var servebin = (req,res,bin='./gui/')=>{
+var servebin = (url,res,bin='./gui/')=>{
+  return new Promise((resolve,reject)=>{
     var contype = '';
 
-    if(req.url.match('\.js$')){contype='text/javascript';}
-    else if(req.url.match('\.css$')){contype='text/css';}
-    else if(req.url.match('\.png$')){contype='image/png';}
-    else{return false;}
+    if(url.match('\.js$')){contype='text/javascript';}
+    else if(url.match('\.css$')){contype='text/css';}
+    else if(url.match('\.png$')){contype='image/png';}
+    else{return resolve(false);}
 
-    var stream = fs.createReadStream(path.join(__dirname,bin,req.url));
-
-        stream.on('error', function(error) {
-            res.writeHead(404, 'Not Found');
-            res.end();
-        });
-
-        stream.pipe(res);
-
-    /*
-    var file = fs.readFile(path.join(__dirname, bin, req.url),(err,con)=>{
-      res.writeHead(200, {"Content-Type": contype});
-      res.end(con);
+    fs.readFile(path.join(__dirname, bin, url),(err,con)=>{
+      if(!err){
+        res.setHeader('X-Content-Type-Options','nosniff');
+        res.writeHead(200, {"Content-Type": contype});
+        res.end(con);
+        return resolve(true);
+      }else{
+        res.writeHead(404);
+        res.end();
+        return resolve(true);
+      }
     });
-    */
-  }
+  });
+}
 
 var servecontrol = (url="",res=null,control='../controllers')=>{
   return new Promise((resolve,reject)=>{
     if(res){
+      console.log('URL',url)
       fs.stat(`${path.join(__dirname,control,url)}.html`,(err,stat)=>{
         if(err){
           fs.readFile(path.join(__dirname,control,'vapi.html'),(err,doc)=>{
@@ -52,9 +52,7 @@ var servecontrol = (url="",res=null,control='../controllers')=>{
               return resolve({success:true,msg:'Bad Page'});
             }else{//load requested page
               res.writeHead(200,{'Content-Type':'text/html'});
-              res.write(doc,'utf-8',()=>{
-                res.end();
-              });
+              res.end(doc);
               return resolve({success:true,msg:'Good Page'});
             }
           });
@@ -84,6 +82,7 @@ var corecall=(req,res,router=false)=>{
     req.on('data',chunk=>{data+=chunk;});
     req.on('end',()=>{
       try{data=JSON.parse(data);}catch{data={}}
+
       if(data!=''&&data.access!=undefined){ //check if data is formated
         let rspak={ //prep vapi response pack object
           msg:'Could not log in..',
@@ -116,7 +115,12 @@ var corecall=(req,res,router=false)=>{
           }
         );
       }else{ //landing page
-        return resolve(servecontrol(req.url,res));
+        servebin(req.url,res).then(
+          was=>{
+            if(was){return resolve(true);}
+            else{return resolve(servecontrol(req.url,res))}
+          }
+        )
       }
     });
   });
