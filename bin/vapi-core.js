@@ -14,7 +14,7 @@ var midware = {
   }
 }
 
-var servebin = (req,res,bin='./gui/')=>{
+var servebin = (req,res,bin='/bin/gui/')=>{
     var contype = '';
 
     if(req.url.match('\.js$')){contype='text/javascript';}
@@ -22,10 +22,20 @@ var servebin = (req,res,bin='./gui/')=>{
     else if(req.url.match('\.png$')){contype='image/png';}
     else{return false;}
 
+    var stream = fs.createReadStream(path.join(__dirname,bin,req.url));
+
+        stream.on('error', function(error) {
+            res.writeHead(404, 'Not Found');
+            res.end();
+        });
+
+        stream.pipe(res);
+    /*
     var file = fs.readFile(path.join(__dirname, bin, req.url),(err,con)=>{
       res.writeHead(200, {"Content-Type": contype});
       res.end(con);
     });
+    */
   }
 
 var servecontrol = (url="",res=null,control='../controllers')=>{
