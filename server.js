@@ -21,7 +21,6 @@ var vapi = require('./bin/vapi-core.js');
 // MIDDLEWARES ///////////////////
 
 vapi.midware.setupmid('controllers','bin/gui');
-vapi.midware
 //////////////////////////////////
 
 
