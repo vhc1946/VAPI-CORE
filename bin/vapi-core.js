@@ -22,7 +22,6 @@ var servebin = (req,res,bin='./gui/')=>{
     else if(req.url.match('\.png$')){contype='image/png';}
     else{return false;}
 
-    /*
     var stream = fs.createReadStream(path.join(__dirname,bin,req.url));
 
         stream.on('error', function(error) {
@@ -31,12 +30,13 @@ var servebin = (req,res,bin='./gui/')=>{
         });
 
         stream.pipe(res);
-    */
 
+    /*
     var file = fs.readFile(path.join(__dirname, bin, req.url),(err,con)=>{
       res.writeHead(200, {"Content-Type": contype});
       res.end(con);
     });
+    */
   }
 
 var servecontrol = (url="",res=null,control='../controllers')=>{
