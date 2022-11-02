@@ -6,7 +6,6 @@
 */
 var path = require('path');
 var {UStore} = require('./admin/vapi-user-store.js');
-var vapiuser = new UStore(path.join(__dirname,'../store/admin/vapiusers.db'));
 var {AdminStore}=require('./admin/vapi-admin-store.js');
 var {AppStore}=require('./apps/vapi-app-store.js');
 //vapiuser.INSERTdb(ustore.userjson);
@@ -60,6 +59,7 @@ var ADMINrouter = (task,ask)=>{
     }
     case 'USERS':{
       if(pack.method!=undefined&&pack.options!=undefined){
+        /*
         vapiuser.AUTHuser(access,true).then(
           auth=>{
             if(auth){
@@ -82,6 +82,7 @@ var ADMINrouter = (task,ask)=>{
             }else{ask.msg='User not Authorized';return res(false)}
           }
         )
+        */
       }else{ask.msg='Pack bad format';return res(false)}
       break;
     }
@@ -91,7 +92,6 @@ var ADMINrouter = (task,ask)=>{
 }
 
 module.exports={
-  vapiuser,
   LOADstoremap,
   ADMINrouter
 }
