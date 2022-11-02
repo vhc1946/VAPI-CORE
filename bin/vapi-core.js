@@ -31,6 +31,8 @@ var servebin = (req,res,bin='./gui/')=>{
 var servecontrol = (url="",res=null,control='../controllers')=>{
   console.log(control)
   return new Promise((resolve,reject)=>{
+    console.log('RES',res);
+    console.log(path.join(__dirname,control,url));
     if(res){
       fs.stat(`${path.join(__dirname,control,url)}.html`,(err,stat)=>{
         if(err){
