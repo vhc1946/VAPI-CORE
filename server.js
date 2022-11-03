@@ -60,6 +60,9 @@ http.createServer((req,res)=>{
     url:req.url,
     timein:new Date().getTime()
   });
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+  res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
   vapi.corecall(req,res,RouteVAPI).then(
     result=>{
       console.log(result);
