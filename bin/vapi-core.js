@@ -95,7 +95,6 @@ var corecall=(req,res,router=false)=>{
             if(auth){//user cleared
               rspak.success=true;
               rspak.msg='Has Logged in'
-              reqlog.success=true; //update request log item
               if(!router){ //check for a routing function
                 router(req.url.split('/'),res,rspak).then(
                   answr=>{
