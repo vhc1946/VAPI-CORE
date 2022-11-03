@@ -46,7 +46,7 @@ var RouteVAPI = (url,res,pak) =>{
     switch(mod){
       case 'PING':{return resolve({body:"...PING"});}
       //case 'JAPI':{return resolve(japi.GETj2vtable(pak,true));}
-      case 'STORE':{return resolve(AppStoreRouter(pak,vstore));}
+      case 'STORE':{ console.log('store');return resolve(AppStoreRouter(pak,vstore));}
       //case 'ADMIN':{return resolve(ADMINrouter(task,pak,vstore));}
       case 'PORTAL':{return resolve(vapi.servecontrol(url,res));}
     }
