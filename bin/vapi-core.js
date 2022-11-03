@@ -41,7 +41,6 @@ var servebin = (url,res,bin='./gui/')=>{
 var servecontrol = (url="",res=null,control='../controllers')=>{
   return new Promise((resolve,reject)=>{
     if(res){
-      console.log('URL',url)
       fs.stat(`${path.join(__dirname,control,url)}.html`,(err,stat)=>{
         if(err){
           fs.readFile(path.join(__dirname,control,'vapi.html'),(err,doc)=>{

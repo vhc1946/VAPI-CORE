@@ -17,6 +17,7 @@ var {vapilogger,arequestlog}=require('./logger/db/logger-db.js');
 var vstore = LOADstoremap(path.join(__dirname,'store/apps'),path.join(__dirname,'store/storemaps/storemap.json'));
 
 var vapi = require('./bin/vapi-core.js');
+var japi = require('./bin/jmart/japimart.js');
 
 // MIDDLEWARES ///////////////////
 
@@ -45,10 +46,9 @@ var RouteVAPI = (url,res,pak) =>{
   return new Promise((resolve,reject)=>{
     switch(mod){
       case 'PING':{return resolve({body:"...PING"});}
-      //case 'JAPI':{return resolve(japi.GETj2vtable(pak,true));}
+      case 'JAPI':{return resolve(japi.GETj2vtable(pak,true));}
       case 'STORE':{ console.log('store');return resolve(AppStoreRouter(pak,vstore));}
       //case 'ADMIN':{return resolve(ADMINrouter(task,pak,vstore));}
-      case 'PORTAL':{return resolve(vapi.servecontrol(url,res));}
     }
   });
 }
