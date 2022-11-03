@@ -109,7 +109,7 @@ var corecall=(req,res,router=false)=>{
             }else{
               res.write(JSON.stringify(rspak)); //write the result to the response
               res.end(); //end the request
-              return resolve({success:false,msg:'No Router'});
+              return resolve({success:false,msg:'Not signed in'});
             }
           }
         );
