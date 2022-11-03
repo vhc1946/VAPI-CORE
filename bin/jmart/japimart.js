@@ -23,6 +23,18 @@ var j2vtables = {
       }
     }
   },
+  customertable:{
+    jpack:(data)=>{
+      console.log('SEARCH CUSTOMERS')
+      return{
+        WebMethod:'GJZJ82J',
+        Option:'download',
+        CompanyCode:'01',
+        Template:'AR_CustomerMaster_tbl',
+        WHERE:[{OP:'=',CustomerCode:data.custcode||''}]
+      }
+    }
+  },
   custserviceitems:{
     jpack:(data)=>{
       return{
@@ -30,7 +42,7 @@ var j2vtables = {
         Option:'download',
         CompanyCode:'01',
         Template:'AR_CustomerServiceItems_tbl',
-        WHERE:[{OP:'=',CustomerCode:'MKSS0101'}]
+        WHERE:[{OP:'=',CustomerCode:data.custcode||''}]
       }
     }
   },
@@ -127,8 +139,8 @@ var GETj2vtable = (pak,all=true)=>{
       success:false,
       table:[]
     };
-    console.log(pak)
     if(j2vtables[pak.data.pack.table]){
+      console.log(3434)
       let params = j2vtables[pak.data.pack.table].jpack(pak.data.pack); //get params
       console.log(params)
       let map = j2vtables[pak.data.pack.table].map;
