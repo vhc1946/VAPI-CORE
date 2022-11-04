@@ -3,7 +3,7 @@ class NEDBconnect{
   constructor(setup,ensure=null){
     this.docs = new DataStore(setup); //connect to user quote
     if(ensure&&ensure!=undefined){this.docs.ensureIndex(ensure)}
-    //this.docs.loadDatabase();
+    this.docs.loadDatabase();
   }
 
   QUERYdb=(query={})=>{

@@ -6,15 +6,114 @@ var vapiuser = new UStore(path.join(__dirname,'../store/admin/vapiusers.db'));
 
 
 var midware = {
-  controls:null,
+  views:null,
   public:null,
-  setupmid:(control,public)=>{
-    this.controls=control || null;
-    this.public=public || null;
-  }
+}
+var setupmid=(v,p)=>{
+  midware.views=v;
+  midware.public=p;
 }
 
-var servebin = (url,res,bin='./gui/')=>{
+/* Acts as a router for the api
+
+  PASSED:
+  - url - entire url from request
+  - pak - pack to hold the response data.(refer to rpak)
+
+  Routes can be added to switch as needed, and are decided by the first url position.
+  The pak is sent as a reference to a variable to template the body of the response.
+  Changes to the pak are made directly to the pak allowing the pak to not be returned
+  from the function.
+
+
+*/
+var RouteVAPI = (url,res,vpak) =>{
+  return new Promise((resolve,reject)=>{
+    switch(vpak.request){
+      case 'PING':{return resolve({body:"...PING"});}
+      case 'CONSOLE':{
+        /*
+        */
+      }
+      case 'JAPI':{return resolve(japi.GETj2vtable(pak,true));}
+      case 'API':{return resolve(AppStoreRouter(pak,vstore));}
+      //case 'ADMIN':{return resolve(ADMINrouter(task,pak,vstore));}
+    }
+  });
+}
+
+var COREproccess=(req,res,log)=>{
+  return new Promise((resolve,reject)=>{
+    console.log(req.connection.remoteAddress)
+    let data=''; //to accept data
+    let url1 = req.url[1]!=undefined?req.url[1].toUpperCase(): '';
+
+    req.on('data',chunk=>{data+=chunk;});
+    req.on('end',()=>{
+      try{data=JSON.parse(data);}catch{data={}}
+      let vpak={ //prep vapi response pack object
+        msg:'Recieved Request',
+        success:true,
+        body:{},
+        data:data
+      }
+      log.push(JSON.parse(JSON.stringify(vpak)));
+      /* AUTH request
+         Need to ensure that before the request goes on, the data is checked for
+         validity. If there is no data the request is likely a resource or page
+         path, and not a request for data. Alternatively, the data contains
+         expected values before continuing.
+      */
+      if(AUTHdata(data)){ //check if data is formated
+        vpak.msg='Check Access'
+        vapiuser.AUTHuser(data.access).then(//check user can access
+          auth=>{
+            vpak.success=auth;
+            log.push(JSON.parse(JSON.stringify(vpak)));
+            if(auth){//user cleared
+              vpak.msg='Fufill Request'
+              RoutVAPI(res,vpak).then(
+                answr=>{
+                  vpak.success = answr;
+                  log.push(JSON.parse(JSON.stringify(vpak)));
+                  res.write(JSON.stringify(vpak)); //write the result to the response
+                  res.end();
+                  return resolve(vpak);
+                }
+              )
+            }else{
+              res.write(JSON.stringify(vpak)); //write the result to the response
+              res.end(); //end the request
+              return resolve(vpak);
+            }
+          }
+        );
+      }else{
+        vpak.msg="Get Resource";
+        servepublic(req.url,res).then(
+          was=>{
+            vpak.success=was;
+            log.push(JSON.parse(JSON.stringify(vpak)));
+            if(was){return resolve(vpak);}
+            else{return resolve(servecontrol(req.url,res))}
+          }
+        )
+      }
+    });
+  });
+}
+
+var AUTHdata=(data)=>{
+  if(data!=''&&data!=undefined){
+    if(data.access!=undefined){
+      //do more checks on data
+      return true;
+    }
+    else{return false;}
+  }else{return false;}
+}
+
+var servepublic = (url,res)=>{
   return new Promise((resolve,reject)=>{
     var contype = '';
 
@@ -23,7 +122,7 @@ var servebin = (url,res,bin='./gui/')=>{
     else if(url.match('\.png$')){contype='image/png';}
     else{return resolve(false);}
 
-    fs.readFile(path.join(__dirname, bin, url),(err,con)=>{
+    fs.readFile(path.join(midware.public, url),(err,con)=>{
       if(!err){
         res.setHeader('X-Content-Type-Options','nosniff');
         res.writeHead(200, {"Content-Type": contype});
@@ -38,14 +137,13 @@ var servebin = (url,res,bin='./gui/')=>{
   });
 }
 
-var servecontrol = (url="",res=null,control='../controllers')=>{
+var servecontrol = (url="",res=null)=>{
   return new Promise((resolve,reject)=>{
     if(res){
-      fs.stat(`${path.join(__dirname,control,url)}.html`,(err,stat)=>{
+      fs.stat(`${path.join(midware.views,url)}.html`,(err,stat)=>{
         if(err){
-          fs.readFile(path.join(__dirname,control,'vapi.html'),(err,doc)=>{
+          fs.readFile(path.join(midware.views,'vapi.html'),(err,doc)=>{
             if(err){//send to landingd?
-              console.log(err)
               res.writeHead(500);
               res.end();
               return resolve({success:true,msg:'Bad Page'});
@@ -57,9 +155,8 @@ var servecontrol = (url="",res=null,control='../controllers')=>{
           });
         }
         else{
-          fs.readFile(`${path.join(__dirname,control,url)}.html`,(err,doc)=>{
+          fs.readFile(`${path.join(midware.views,url)}.html`,(err,doc)=>{
             if(err){//send to landingd?
-              console.log(err)
               res.writeHead(500);
               res.end();
               return resolve({success:true,msg:'Bad Page'});
@@ -75,57 +172,8 @@ var servecontrol = (url="",res=null,control='../controllers')=>{
   });
 }
 
-var corecall=(req,res,router=false)=>{
-  return new Promise((resolve,reject)=>{
-    let data=''; //to accept data
-    req.on('data',chunk=>{data+=chunk;});
-    req.on('end',()=>{
-      try{data=JSON.parse(data);}catch{data={}}
-
-      if(data!=''&&data.access!=undefined){ //check if data is formated
-        let rspak={ //prep vapi response pack object
-          msg:'Could not log in..',
-          success:false,
-          body:{},
-          data:data
-        }
-        vapiuser.AUTHuser(data.access).then(//check user can access
-          auth=>{
-            if(auth){//user cleared
-              rspak.success=true;
-              rspak.msg='Has Logged in'
-              if(router){ //check for a routing function
-                router(req.url.split('/'),res,rspak).then(
-                  answr=>{
-                    rspak.success = answr;
-                    res.write(JSON.stringify(rspak)); //write the result to the response
-                    res.end();
-                    return resolve({success:true,msg:'Responded'});
-                  }
-                )
-              }else{return resolve({success:false,msg:'No Router'});}
-            }else{
-              res.write(JSON.stringify(rspak)); //write the result to the response
-              res.end(); //end the request
-              return resolve({success:false,msg:'Not signed in'});
-            }
-          }
-        );
-      }else{ //landing page
-        servebin(req.url,res).then(
-          was=>{
-            if(was){return resolve(true);}
-            else{return resolve(servecontrol(req.url,res))}
-          }
-        )
-      }
-    });
-  });
-}
 
 module.exports={
-  corecall,
-  servebin,
-  servecontrol,
-  midware
+  COREproccess,
+  setupmid
 }
