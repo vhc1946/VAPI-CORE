@@ -1,9 +1,11 @@
 
 var path = require('path');
+var url = require('url');
 var fs = require('fs');
 var {UStore} = require('./admin/vapi-user-store.js');
 var vapiuser = new UStore(path.join(__dirname,'../store/admin/vapiusers.db'));
 
+var japi = require('./jmart/japimart.js');
 
 var midware = {
   views:null,
@@ -27,16 +29,18 @@ var setupmid=(v,p)=>{
 
 
 */
-var RouteVAPI = (url,res,vpak) =>{
+var RouteVAPI = (res,vpak) =>{
   return new Promise((resolve,reject)=>{
-    switch(vpak.request){
+    console.log(vpak)
+    switch(vpak.data.access.request.toUpperCase()){
       case 'PING':{return resolve({body:"...PING"});}
       case 'CONSOLE':{
+        console.log('console')
         /*
         */
       }
-      case 'JAPI':{return resolve(japi.GETj2vtable(pak,true));}
-      case 'API':{return resolve(AppStoreRouter(pak,vstore));}
+      case 'JAPI':{return resolve(japi.GETj2vtable(vpak,true));}
+      case 'STORE':{return resolve(AppStoreRouter(vpak,vstore));}
       //case 'ADMIN':{return resolve(ADMINrouter(task,pak,vstore));}
     }
   });
@@ -44,10 +48,11 @@ var RouteVAPI = (url,res,vpak) =>{
 
 var COREproccess=(req,res,log)=>{
   return new Promise((resolve,reject)=>{
-    console.log(req.connection.remoteAddress)
     let data=''; //to accept data
-    let url1 = req.url[1]!=undefined?req.url[1].toUpperCase(): '';
+    console.log(req.url.split('/'))
+    let url1 = req.url.split('/')[1]!=undefined?req.url.split('/')[1].toUpperCase(): '';
 
+    console.log(url1)
     req.on('data',chunk=>{data+=chunk;});
     req.on('end',()=>{
       try{data=JSON.parse(data);}catch{data={}}
@@ -58,46 +63,62 @@ var COREproccess=(req,res,log)=>{
         data:data
       }
       log.push(JSON.parse(JSON.stringify(vpak)));
-      /* AUTH request
-         Need to ensure that before the request goes on, the data is checked for
-         validity. If there is no data the request is likely a resource or page
-         path, and not a request for data. Alternatively, the data contains
-         expected values before continuing.
-      */
-      if(AUTHdata(data)){ //check if data is formated
-        vpak.msg='Check Access'
-        vapiuser.AUTHuser(data.access).then(//check user can access
-          auth=>{
-            vpak.success=auth;
+      console.log(url1)
+      switch(url1){
+        case 'API':{
+          vpak.msg='Auth data';
+          /* AUTH request
+             Need to ensure that before the request goes on, the data is checked for
+             validity. If there is no data the request is likely a resource or page
+             path, and not a request for data. Alternatively, the data contains
+             expected values before continuing.
+          */
+          if(AUTHdata(data)){ //check if data is formated
+            vpak.success=true;
             log.push(JSON.parse(JSON.stringify(vpak)));
-            if(auth){//user cleared
-              vpak.msg='Fufill Request'
-              RoutVAPI(res,vpak).then(
-                answr=>{
-                  vpak.success = answr;
-                  log.push(JSON.parse(JSON.stringify(vpak)));
+            vpak.msg='Check Access'
+            vapiuser.AUTHuser(data.access).then(//check user can access
+              auth=>{
+                vpak.success=auth;
+                log.push(JSON.parse(JSON.stringify(vpak)));
+                if(auth){//user cleared
+                  vpak.msg='Fufill Request'
+                  RouteVAPI(res,vpak).then(
+                    answr=>{
+                      vpak.success = answr;
+                      log.push(JSON.parse(JSON.stringify(vpak)));
+                      res.write(JSON.stringify(vpak)); //write the result to the response
+                      res.end();
+                      return resolve(vpak);
+                    }
+                  )
+                }else{
                   res.write(JSON.stringify(vpak)); //write the result to the response
-                  res.end();
+                  res.end(); //end the request
                   return resolve(vpak);
                 }
-              )
-            }else{
-              res.write(JSON.stringify(vpak)); //write the result to the response
-              res.end(); //end the request
-              return resolve(vpak);
-            }
-          }
-        );
-      }else{
-        vpak.msg="Get Resource";
-        servepublic(req.url,res).then(
-          was=>{
-            vpak.success=was;
+              }
+            );
+          }else{
+            vpak.success=false;
             log.push(JSON.parse(JSON.stringify(vpak)));
-            if(was){return resolve(vpak);}
-            else{return resolve(servecontrol(req.url,res))}
+            res.write(JSON.stringify(vpak));
+            res.end();
+            return resolve(vpak);
           }
-        )
+          break;
+        }
+        default:{
+          vpak.msg="Get Resource";
+          servepublic(req.url,res).then(
+            was=>{
+              vpak.success=was;
+              log.push(JSON.parse(JSON.stringify(vpak)));
+              if(was){return resolve(vpak);}
+              else{return resolve(servecontrol(req.url,res))}
+            }
+          )
+        }
       }
     });
   });
