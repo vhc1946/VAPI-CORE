@@ -23,6 +23,18 @@ var j2vtables = {
       }
     }
   },
+  contracttable:{
+    jpack:(data)=>{
+      console.log('SEARCH CUSTOMERS')
+      return{
+        WebMethod:'GJZJ82J',
+        Option:'download',
+        CompanyCode:'01',
+        Template:'WO_SC_ServiceContractMaster_tbl',
+        WHERE:[{OP:'=',CustomerCode:data.custcode||''}]
+      }
+    }
+  },
   customertable:{
     jpack:(data)=>{
       console.log('SEARCH CUSTOMERS')
