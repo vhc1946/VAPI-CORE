@@ -11,6 +11,17 @@ var j2vtables = {
       }
     }
   },
+  flbookres:{
+    jpack:(data)=>{
+      console.log(data)
+      return{
+        WebMethod:'GJZJ82J',
+        Option:'download',
+        CompanyCode:'01',
+        Template:'WO_FlatRateBookPricing_tbl'
+      }
+    }
+  },
   wonumber:{
     jpack:(data)=>{
       console.log(data)
@@ -81,7 +92,6 @@ var j2vtables = {
       }
     }
   },
-
   wod:{ //use for tech report // pay attention to sorting dates
     jpack:(data)=>{
       let where=[];
