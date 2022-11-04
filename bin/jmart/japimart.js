@@ -19,7 +19,7 @@ var j2vtables = {
         Option:'download',
         CompanyCode:'01',
         Template:'WO_FlatRateBookPricing_tbl',
-        WHERE:[{OP:'=',FlarRateBookCode:data.bookcode||''}]
+        WHERE:[{OP:'=',FlatRateBookCode:data.bookcode||''}]
       }
     }
   },
