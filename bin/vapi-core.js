@@ -87,6 +87,7 @@ var COREproccess=(req,res,log)=>{
                     answr=>{
                       vpak.success = answr;
                       log.push(JSON.parse(JSON.stringify(vpak)));
+                      console.log(vpak);
                       res.write(JSON.stringify(vpak)); //write the result to the response
                       res.end();
                       return resolve(vpak);
