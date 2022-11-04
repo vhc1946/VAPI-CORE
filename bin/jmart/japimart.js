@@ -11,14 +11,15 @@ var j2vtables = {
       }
     }
   },
-  flbookres:{
+  flatratebook:{
     jpack:(data)=>{
       console.log(data)
       return{
         WebMethod:'GJZJ82J',
         Option:'download',
         CompanyCode:'01',
-        Template:'WO_FlatRateBookPricing_tbl'
+        Template:'WO_FlatRateBookPricing_tbl',
+        WHERE:[{OP:'=',:FlarRateBookCode:data.bookcode||''}]
       }
     }
   },
