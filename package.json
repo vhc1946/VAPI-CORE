@@ -10,10 +10,11 @@
   "author": "cmv",
   "license": "ISC",
   "dependencies": {
-    "easy-soap-request": "^4.7.0",
-    "xml2js": "^0.4.23",
     "child-process": "^1.0.2",
+    "easy-soap-request": "^4.7.0",
     "nedb": "^1.8.0",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "openssl": "^2.0.0",
+    "xml2js": "^0.4.23"
   }
 }

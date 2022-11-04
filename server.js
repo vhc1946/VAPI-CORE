@@ -1,7 +1,7 @@
 //Libraries used in project
 const path = require('path'),
       fs = require('fs'),
-      http = require('http');
+      https = require('https');
 var {exec} = require('child_process');
 
 var port = 5000; //port for local host
@@ -22,7 +22,12 @@ var japi = require('./bin/jmart/japimart.js');
 
 vapi.setupmid(path.join(__dirname,'controllers'),path.join(__dirname,'public')); //access to resource files
 
-http.createServer((req,res)=>{
+var options={
+  key:fs.readFileSync(path.join(__dirname,'/ssl/key.pem')),
+  cert: fs.readFileSync(path.join(__dirname,'/ssl/cert.pem'))
+}
+
+https.createServer(options,(req,res)=>{
   let reqlog=arequestlog({ //request tracking object
     url:req.url,
     cip:req.connection.remoteAddress,
