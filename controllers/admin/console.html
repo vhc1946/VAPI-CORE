@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head >
+    <meta name="viewport" content="width=device-width">
+    <meta charset=UTF-8>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="/repo/css/utils/vg-general.css" />
+    <style>
+
+      @keyframes newlog{
+        from{background-color:#538445;}
+        to{background-color:#527359;}
+      }
+
+      .vapi-backsplash{
+        position:fixed;
+        width:100%;
+        height:100%;
+        z-index:-1;
+      }
+      .console-view{
+        display:flex;
+        flex-direction: column;
+        align-items:center;
+        width:100%;
+        height:calc(100vh - 30px);
+        overflow-y:scroll;
+        scrollbar-width:none;
+      }
+      .console-view>div{
+        width:75%;
+      }
+
+      #console-stop{
+        background-color:rgba(255,255,255,.5);
+        position: fixed;
+        top:0;
+        right:0;
+      }
+
+      .session-stop-block{
+        background-color:#735252;
+        color:#9da5b4;
+      }
+      .session-start-block{
+        background-color:#527359;
+        color:#9da5b4;
+      }
+      .console-chunk-last>div{
+        background-color:#527359;
+        animation-name:newlog;
+        animation-duration:.5s;
+      }
+      .console-chunk{
+        align-self:center;
+        border-bottom:1px solid rgb(255,255,255);
+        border-top:1px solid rgb(255,255,255);
+        border-right:none;
+        border-left:none;
+      }
+
+      .console-log{
+        border:1px solid #9da5b4;
+        padding:10px 50px 10px 50px;
+        background-color: #373739;
+        color:#9da5b4;
+      }
+      .console-log:hover{
+        background-color:#585859;
+      }
+      .console-request-tracker>div{
+        display:flex;
+      }
+      .console-request-tracker>div>div:nth-child(1){
+        width:233px;
+        border-right:1px solid #9da5b4;
+      }
+      .console-request-tracker>div>div:nth-child(2){
+        text-align:center;
+        width:110px;
+      }
+      .console-input{
+        display:flex;
+      }
+      .console-input>div:nth-child(1){
+        width:233px;
+        border-right:1px solid #9da5b4;
+      }
+      .console-input>div:nth-child(2){
+        padding-left:10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="console-stop">STOP</div>
+    <img class="vapi-backsplash" src="/assets/vhclogo.png" />
+    <div id="console-container"></div>
+  </body>
+  <script type="module" src='/admin/vapi-console.js'></script>
+</html>

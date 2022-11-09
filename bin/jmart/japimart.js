@@ -5,9 +5,11 @@ var j2vtables = {
     jpack:(data)=>{
       return{
         WebMethod:'GJZJ82J',
-        Option:'download',
+        Option:data.option||'download',
         CompanyCode:'01',
-        Template:'WO_HistoryBillingRecap_tbl'
+        Template:data.template||'WO_HistoryBillingRecap_tbl',
+        SELECT:data.select||[],
+        WHERE:data.where||[]
       }
     }
   },

@@ -1,47 +1,81 @@
 
+var path=require('path');
 var DataStore = require('nedb');
 var {NEDBconnect} =require('./storage/nedb-connector.js');
 
-var arequestlog=(rl=null)=>{
-  if(!rl||rl==undefined){rl={};}
-  return {
-    url:rl.url||null,
-    cip:rl.cip||null,
+var logfiles = {
+  error:{
+    file:'errorlogs.db',
+    info:(el)=>{
+      if(!el||el==undefined){el={}}
+      return {
+        err:el.err||'',
+        msg:el.msg||'EMPTY'
+      }
+    }
+  },
+  request:{
+    file:'requestlogs.db',
+    info:(rl)=>{
+      if(!rl||rl==undefined){rl={};}
+      return {
+        url:rl.url||null,
+        cip:rl.cip||null,
 
-    timein:rl.timein || null,
-    timeout:rl.timeout || null,
-    timerun:rl.timerun || null,
+        access:rl.access||{user:'',pswrd:'',coid:'',appid:''},
 
-    access:rl.access||{user:'',pswrd:'',coid:'',appid:''},
-
-    tracker:rl.tracker||[],
-    pack:rl.pack||{},
-    success:rl.success||false
+        tracker:rl.tracker||[],
+        pack:rl.pack||{},
+        success:rl.success||false
+      }
+    }
+  },
+  console:{
+    file:'consolelogs.db',
+    info:(cl)=>{
+      if(!cl||cl==undefined){cl={};}
+      return{
+        header:cl.header||'HEAD',
+        program:cl.program||'GENERAL',
+        msg:cl.msg||'EMPTY'
+      }
+    }
+  },
+  tracking:{
+    file:'processlogs.db',
+    info:(tl)=>{return{}}
   }
 }
 
-class LogStore extends NEDBconnect{
-  constructor(docs){
-    super(docs);
+class Logger extends NEDBconnect{
+  constructor(process,type,docs){
+    super(path.join(docs,logfiles[type].file));
+    this.type=type;
+    this.info=logfiles[type].info;
+
+    console.log(this.info())
   }
 
-  LOGrequeststart=(reqitem = {})=>{
-      reqitem.timein = new Date().getTime();
-      return this.INSERTdb(arequestlog(reqitem));
+  newitem(it){
+    if(!it||it==undefined){it={}}
+    return{
+      timein:new Date().getTime(),
+      timeout:null,
+      timeout:null,
+      program:it.program || 'VAPI',
+      process:it.process || '',
+      type:it.type||'General',
+      msg:it.msg||'New Item',
+      info:this.info(it.info)||{}
+    }
   }
-  LOGrequestend=(reqitem={})=>{
-    reqitem.timeout = new Date().getTime();
-    reqitem.timerun = reqitem.timeout - reqitem.timein;
-    reqitem.timeout = new Date().getTime();
-    console.log(reqitem);
-    return this.INSERTdb(reqitem);
-  }
-  GETlog = (flts={})=>{
-    return this.QUERYdb(flts);
+
+  LOGitem=(item)=>{
+    item.timeout = new Date().getTime();
+    item.timerun = item.timeout - item.timein;
+    item.timeout = new Date().getTime();
+    this.INSERTdb(item)
   }
 }
 
-module.exports={
-  arequestlog,
-  LogStore
-}
+module.exports={Logger}

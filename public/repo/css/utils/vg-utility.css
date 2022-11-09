@@ -1,0 +1,75 @@
+
+/*/// INPUTS /////////////////////////////////////////////////////////////////*/
+.vg-checkbox{
+    border: 1px solid black;
+    height: 15px;
+    width: 15px;
+    margin: 5px;
+    border-radius: 3px;
+}
+.vg-checkbox-checked{
+  background-color: var(--background-light);
+}
+.vg-checkbox-checked::after{
+  content: "\2713";
+  position: relative;
+  font-weight:bold;
+  top:-10px;
+}
+/*////////////////////////////////////////////////////////////////////////////*/
+
+
+/*/// BUTTONS ////////////////////////////////////////////////////////////////*/
+[class*="-action-button"]{
+  padding: 3px;
+  background-color: var(--BEE-blue);
+  color: var(--text-light);
+  margin-right: 1px;
+  text-align: center;
+}
+[class*="-action-button"]:hover{
+  opacity: .4;
+  cursor:pointer;
+}
+.flat-action-button{
+  width: 80px;
+}
+.sm-action-button{
+  width: 40px;
+}
+.icon-action-button{
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+#user-apps-button:hover{
+  opacity: .4;
+  cursor:pointer;
+}
+
+/* Quote Sidebar Buttons */
+.quote-nav-button{
+  height: 25px;
+  width: 25px;
+  cursor: pointer;
+  filter: invert();
+  margin: 10px 0px;
+}
+.q-bottom-nav-buttons{
+display:inline-flex;
+justify-content:flex-end;
+}
+.quote-nav-button:hover{
+  filter: none;
+}
+/*////////////////////////////////////*/
+
+/*/// TABLES /////////////////////////////////////////////////////////////////*/
+.vg-std-flextable>div{
+  display:flex;
+  border-bottom: 1px solid var(--background-dark);
+}
+.vg-std-flextable>div div, .vg-std-flextable>div input{
+  flex-basis:150px
+}
+/*////////////////////////////////////////////////////////////////////////////*/

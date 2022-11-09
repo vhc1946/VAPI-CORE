@@ -1,0 +1,89 @@
+#titlebar-cont{
+    position: sticky;
+    top: 0;
+    display:flex;
+    justify-content: space-between;
+    flex-flow: row;
+    background-color: darkgray;
+    width: 100%;
+    height: 25px;
+    z-index: 50;
+    transition: top 0.3s;
+}
+#titlebar-cont-left{
+    position: relative;
+}
+#titlebar-cont-right{
+    height: 100%;
+}
+#titlebar-moretools-quick{
+    position: absolute;
+    left:0px;
+    top:25px;
+    background-color: darkgray;
+}
+#titlebar-title{
+    color: white;
+    flex-grow: 1;
+    text-align: center;
+    -webkit-app-region:drag;
+}
+
+.titlebar-button-action{
+    height: 100%;
+}
+#titlebar-moretools-quick>.titlebar-button-action{
+  height:unset;
+  width:15px;
+  display: flex;
+  flex-direction:column;
+  margin: 10px;
+  padding:0;
+}
+[class*="titlebar-button-"]{
+    padding: 5px 10px;
+    filter: invert();
+}
+[class*="titlebar-button-"]:hover{
+    cursor: pointer;
+    filter: none;
+}
+.moretools-spacer:hover{
+    cursor: unset;
+    filter: invert();
+}
+.titlebar-button-view{
+    height: 100%;
+}
+
+.titlebar-button-moretools{
+    display: flex;
+    flex-direction:column;
+    margin: 10px;
+    padding:0;
+}
+#titlebar-win-close{
+    padding: 5px 10px;
+}
+#titlebar-win-close:hover{
+    background-color: cyan;
+    filter: invert();
+}
+/* User Name */
+#titlebar-page-user-cont{
+    position: relative;
+}
+#titlebar-username{
+    position: absolute;
+    bottom: 5px;
+    left: 35px;
+    display: none;
+    color:var(--text-dark);
+}
+#titlebar-page-user:hover+#titlebar-username{
+    display: block;
+}
+
+@media print{
+    #titlebar-cont{display:none;}
+}
