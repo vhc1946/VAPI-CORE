@@ -96,6 +96,7 @@ class ConsoleLog{
             }
             this.connectsession();
           }else{
+            try{this.console.children[0].classList.remove('console-chunk-last');}catch{}
             this.console.prepend(document.createElement('div'));
             this.console.children[0].innerHTML='<div class="session-stop-block">...Disconnected</div>';
           }
