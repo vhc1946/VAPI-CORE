@@ -105,7 +105,7 @@ class LoginForm extends VHCform{
     this.permission=false;
 
     let creds=this.storecreds;
-
+    console.log(creds);
     if(creds && creds.user!=''||creds.pswrd!=''){
       this.form=creds;
       this.submit().then(
@@ -143,7 +143,13 @@ class LoginForm extends VHCform{
     }
   }
 
-  get storecreds(){try{return JSON.parse(localStorage.getItem('vapi-user'))}catch{return {user:'',pswrd:''};}}
+  get storecreds(){
+    try{
+      let creds=JSON.parse(localStorage.getItem('vapi-user'));
+      if(creds){return creds;}
+      else{return {user:'',pswrd:''};}
+    }catch{return {user:'',pswrd:''};}
+  }
   set storecreds(creds={user:'',pswrd:''}){localStorage.setItem('vapi-user',JSON.stringify(creds))}
 
   validate(){
