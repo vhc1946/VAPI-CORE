@@ -3,6 +3,7 @@ var japi = require('./japi.js');
 var j2vtables = {
   test:{
     jpack:(data)=>{
+      console.log(data);
       return{
         WebMethod:'GJZJ82J',
         Option:data.option||'download',
@@ -165,9 +166,7 @@ var GETj2vtable = (pak,all=true)=>{
       table:[]
     };
     if(j2vtables[pak.data.pack.table]){
-      console.log(3434)
       let params = j2vtables[pak.data.pack.table].jpack(pak.data.pack); //get params
-      console.log(params)
       let map = j2vtables[pak.data.pack.table].map;
       if(params){japi.QUERYtable(params?params:null,map?map:undefined,all).then(
         result=>{
@@ -185,7 +184,7 @@ var GETj2vtable = (pak,all=true)=>{
   });
 }
 
-var JAPIroutes = ()=>{
+var JAPIroutes = (req,res,vpak,log)=>{
   return new Promise((res,rej)=>{
 
   });

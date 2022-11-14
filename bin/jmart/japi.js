@@ -4,6 +4,7 @@
     Security code = 3a4d6080ef9393fa1675fa0ce0132f1b
 
 */
+var j2vconvert = require('./tables/jonas-table-headers.json');
 
 const soapreq = require('easy-soap-request');
 var parsexml = require('xml2js').parseString;
@@ -63,6 +64,21 @@ var SENDrequest=(params)=>{
 });
 }
 
+var convertJitem=(item,map)=>{
+  let nitem={};
+  for(let i in item){
+    if(map[i]!=''&&map[i]!=undefined){
+      nitem[map[i]]=item[i];
+    }
+  }
+  return nitem;
+}
+var jtableconvert=(template,table)=>{
+  for(let x=0;x<table.length;x++){
+    table[x]=convertJitem(table[x],j2vconvert[template]);
+  }
+  return table;
+}
 /* Parse JONAS Soap response
 */
 var PARSEresponse=(body)=>{
@@ -70,16 +86,17 @@ var PARSEresponse=(body)=>{
     parsexml(body,(err,result)=>{//parse the body
       let bod = JSON.parse(result['soap:Envelope']['soap:Body'][0]['JonasAPIResponse'][0]['JonasAPIResult']);
       try{bod.data = JSON.parse(bod.data);}catch{}
-      console.log(bod.data);
       bod.success = true; //body marked for intenrnal use
-      if(bod.data.errorsFound==0){ //test for errors *MORE NEEDED HERE
+      if(bod.data.errorsFound==0||bod.data.errorsFound==undefined){ //test for errors *MORE NEEDED HERE
         if(bod.data[bod.data.Template]!=undefined){
-          bod.data['table']=bod.data[bod.data.Template];
+          if(bod.data.Option=='download'&&j2vconvert[bod.data.Template]){
+            bod.data['table']=jtableconvert(bod.data.Template,bod.data[bod.data.Template]);
+          }else{bod.data['table']=bod.data[bod.data.Template];}
           bod.data[bod.data.Template]=undefined;
-        }
+        }else{bod.data['table']=[]}
       }else{
-
-        bod.msg = bod.data.error!=undefined?bod.data.error[0]:bod.data.errors[0]!=undefined?bod.data.errors[0]:bod.message; //attach error message *COMBINE ARRAY MESSAGE
+        try{bod.msg = bod.data.error[0];}
+        catch{bod.msg=bod.message}
         bod.success = false;
       }
       return res(bod);
