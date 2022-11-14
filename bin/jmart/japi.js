@@ -79,6 +79,7 @@ var jtableconvert=(template,table)=>{
   }
   return table;
 }
+
 /* Parse JONAS Soap response
 */
 var PARSEresponse=(body)=>{
