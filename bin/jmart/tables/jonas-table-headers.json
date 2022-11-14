@@ -177,11 +177,10 @@
     "ARTermsCode": "",
     "XOIURL": ""
   },
+
   "WO_SC_ServiceContractMaster_tbl":{
-
     "CustomerCode":"custcode",
-
-​    "ServiceContractNumber":"id",
+    "ServiceContractNumber":"id",
     "ContractNumberOriginal":"origid",
     "ContractNumberRenewed":"renewid",
 
