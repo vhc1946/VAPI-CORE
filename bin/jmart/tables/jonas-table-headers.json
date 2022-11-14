@@ -2,7 +2,7 @@
   "WO_Headers_tbl":{
 
     "WorkOrderNumber": "id",
-    "CustomerCode": "custCode",
+    "CustomerCode": "custcode",
 
     "PhoneNumber": "contactphone",
     "ContactName": "contactname",
