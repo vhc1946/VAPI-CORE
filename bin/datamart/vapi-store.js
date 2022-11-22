@@ -2,7 +2,7 @@
 var path = require('path');
 var {NEDBconnect}=require('../storage/nedb-connector.js');
 
-class AppStore{
+class VAPIStore{
   constructor(storeroot,storename,storemap){
     this.root=storeroot;
     this.store=storename;
@@ -76,5 +76,5 @@ class AppStore{
 }
 
 module.exports={
-  AppStore
+  VAPIStore
 }

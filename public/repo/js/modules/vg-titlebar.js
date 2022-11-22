@@ -1,8 +1,12 @@
 
 import {CreateComponent} from '../tools/vhc-components.js';
-
+import {VHCform} from '../tools/vhc-forms.js';
 //  PATHS //
-var stylesheets = ['repo/css/modules/vg-titlebar.css','repo/css/modules/vg-login.css'];
+var stylesheets = [
+  '/~repo/css/modules/vg-titlebar.css',
+  '/~repo/css/modules/vg-login.css',
+  '/~repo/css/utils/vg-general.css'
+];
 
 var tbdom={ // Titlebar
   cont:'titlebar-cont',
@@ -48,30 +52,6 @@ var tbdom={ // Titlebar
   }
 }
 
-class VHCform{
-  constructor(cont){
-    this.cont=cont;
-    this.inputs={};
-  }
-
-  set form(input){
-    for(let i in this.inputs){
-      this.inputs[i].value = input[i]?input[i]:'';
-    }
-  }
-  get form(){
-    let fi ={}
-    for(let i in this.inputs){
-      fi[i]=this.inputs[i].value;
-    }
-    return fi;
-  }
-
-
-  switch(){}
-  validate(){}
-  submit(){}
-}
 
 var ldom={
   cont:'login-box',
@@ -100,7 +80,7 @@ class LoginForm extends VHCform{
 
     this.inputs.user=document.getElementById(ldom.inputs.user);
     this.inputs.pswrd=document.getElementById(ldom.inputs.pswrd);
-    console.log(this.inputs)
+
 
     this.permission=false;
 
@@ -154,8 +134,8 @@ class LoginForm extends VHCform{
 
   validate(){
     let frm = this.form;
-    if(frm.user!=''||frm.pswrd!=''){return true;}
-    else{return false;}
+    if(frm.user!=''||frm.pswrd!=''){return frm;}
+    else{return null;}
   }
   submit(){
     return new Promise((resolve,reject)=>{
@@ -188,7 +168,7 @@ var tdom = ()=>{
             [`#${tbdom.more.cont}.img`]:{
               attributes:{
                 class: "titlebar-button-action",
-                src: "assets/icons/menu-burger.png",
+                src: "/~assets/icons/menu-burger.png",
                 alt: "MORE",
                 title: "More"
               },
@@ -216,7 +196,7 @@ var tdom = ()=>{
               [`#${tbdom.page.user}.img`]:{
                 attributes:{
                   class: "titlebar-button-action",
-                  src: "assets/icons/user.png",
+                  src: "/~assets/icons/user.png",
                   alt: "USER",
                   title: "Log Out"
                 },
@@ -235,7 +215,7 @@ var tdom = ()=>{
             [`#${tbdom.utils.buttons.help}.img`]:{
               attributes:{
                 class: "titlebar-button-action",
-                src: "assets/icons/info.png",
+                src: "/~assets/icons/info.png",
                 alt: "HELP",
                 title: "help"
               },
@@ -280,7 +260,7 @@ var CREATEactionbuttons=(acts)=>{
   for(let ma in acts){
     alist.push(document.createElement('img'));
     if(ma.includes('spacer')){
-      acts[ma]={src:'./bin/repo/assets/icons/minus.png',title: ''}
+      acts[ma]={src:'/~repo/assets/icons/minus.png',title: ''}
       alist[alist.length-1].classList.add('moretools-spacer');
     }
     alist[alist.length-1].classList.add(tbdom.utils.buttons.action);
@@ -302,7 +282,9 @@ var SETUPtitlebar=(qacts={},macts={},login=true)=>{
     $(moreele).toggle();
   });
 
+  $(document.getElementById(tbdom.login.cont)).hide();
   if(login){
+    $(document.getElementById(tbdom.login.cont)).show();
     document.getElementById(tbdom.page.user).addEventListener('click',(ele)=>{
       if($(document.getElementById(tbdom.login.cont)).is(":visible")){
         $(document.getElementById(tbdom.login.cont)).hide();

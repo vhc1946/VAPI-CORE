@@ -21,22 +21,6 @@ var mactions={
 
 var login = Titlebar.SETUPtitlebar(qactions,mactions);
 
-var testjapi=(url,data)=>{
-  return new Promise((resolve,reject)=>{
-    var options={
-      method:'POST',
-      headers:{
-        'Accept':'application/json'
-      },
-      body:JSON.stringify(data)
-    }
-    fetch(url,options)
-    .then(response=>{console.log(response);return response.json()})
-    .then(data=>{return resolve(data);})
-    .catch(err=>{console.log(err);})
-  });
-}
-
 var conurl='/console';//'https://localhost:5000/console';
 class ConsoleLog{
   constructor(view,log=null){

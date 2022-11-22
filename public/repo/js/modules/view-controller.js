@@ -13,9 +13,9 @@ var FINDparentele=(ele,stop)=>{
 /////////////////////
 
 //  PATHS //
-var stylesheets = ['/repo/css/modules/vg-viewcontrols.css'];
+var stylesheets = ['/~repo/css/modules/vg-viewcontrols.css'];
 var assets={
-  viewclose:'assets/icons/cross-red.png'
+  viewclose:'/~assets/icons/cross-red.png'
 }
 
 for(let x=0,l=stylesheets.length;x<l;x++){
@@ -147,7 +147,7 @@ var vcgroup={//STYLE GROUPS
     views will not be setup
 */
 export class ViewGroup{
-  constructor({cont=document.ElementCreate('div'),type='',style=null,delEve=()=>{},swtchEve=()=>{}}){
+  constructor({cont=document.createElement('div'),type='',style=null,delEve=()=>{},swtchEve=()=>{}}){
     this.cont=CreateComponent(vdom());
     cont.appendChild(this.cont);
 

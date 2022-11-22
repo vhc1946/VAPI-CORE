@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title></title>
+    <style>
+      [class*="setting-view"]{
+        display:none;
+        align-items:center;
+
+      }
+      .loose-view-selected{
+        display:flex;
+      }
+
+      .user-edit-form{
+        display:grid;
+        grid-template-columns:repeat(6,1fr);
+      }
+
+      .db-cont>div:nth-child(1){
+        text-align: center;
+      }
+      .store-cont{
+
+      }
+      .collection-cont{
+
+      }
+      .db-file-block{
+        display:flex;
+      }
+      .db-file-block>div{
+        padding-right:15px;
+        padding-left:15px;
+        border-right: 2px solid black;
+      }
+      .db-file-block>div:nth-child(2){
+        border-right:none;
+      }
+      .db-ensure-block>div:nth-child(1){
+        justify-item:center;
+      }
+      .db-ensure-block>div{
+        display:flex;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="settings-container">
+      <div id="setting-view-companies" class="setting-view">COMPANY SETTINGS</div>
+      <div id="setting-view-users" class="setting-view loose-view-selected"><h1>USER SETTINGS</h1></div>
+      <div id="setting-view-jonas" class="setting-view">JONAS SETTINGS</div>
+      <div id="setting-view-stores" class="setting-view"></div>
+    </div>
+  </body>
+  <script type="module" src="/admin/vapi-settings.js"></script>
+</html>

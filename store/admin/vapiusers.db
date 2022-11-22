@@ -1,4 +1,4 @@
-{"_id":"DPsWaooUm0agw8FK"}
 {"user":"MURRY","pswrd":"vogel123","admin":false,"_id":"EA6OquxFy00XadqS"}
 {"user":"VOGCH","pswrd":"vogel123","admin":true,"_id":"GuRDjijDAlI24n3c"}
+{"user":"","pswrd":"","group":"","fname":"","lname":"","phone":"","email":"","company":"","joined":"","title":"","dept":"","repto":"","jdescr":"","photo":"","_id":"JeyuuCcA1Bw2Ks5X"}
 {"$$indexCreated":{"fieldName":"user","unique":true,"sparse":true}}

@@ -1,4 +1,5 @@
 var {NEDBconnect}=require('../storage/nedb-connector.js');
+
 class UStore extends NEDBconnect{
   constructor(udocs){
     super({filename:udocs,autoload:true},{fieldName: 'user',unique: true,sparse:true}); //connect to db file
@@ -32,14 +33,15 @@ class UStore extends NEDBconnect{
     });
   }
 
-  GETuser = (opts)=>{
+  QUERYuser = (opts)=>{
     return new Promise((res,rej)=>{
       if(!opts.query){return res({docs:[],err:'bad options'})}
       return res(this.QUERYdb(opts.query));
     });
   }
-  ADDuser = (opts)=>{
+  INSERTuser = (opts)=>{
     return new Promise((res,rej)=>{
+      console.log('DOCS',opts.docs)
       if(!opts.docs){return res({doc:[],err:'bad options'});}
       return res(this.INSERTdb(opts.docs));
     });
@@ -58,6 +60,7 @@ class UStore extends NEDBconnect{
     });
   }
 }
+
 module.exports={
   UStore
 }
