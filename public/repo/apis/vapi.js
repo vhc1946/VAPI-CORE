@@ -1,5 +1,5 @@
 
-var vapiurl = 'https://localhost:5000/'
+var vapiurl = 'https://18.191.134.244:5000/'
 
 export var SENDrequest = (pack,url=vapiurl)=>{
   return new Promise((res,rej)=>{
