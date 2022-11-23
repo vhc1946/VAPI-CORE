@@ -40,7 +40,6 @@ server.on('request',(req,res)=>{
   /////////////////////////////////////////
 
   req.on('data',chunk=>{data+=chunk;});
-
   req.on('end',()=>{
     try{data=JSON.parse(data);}catch{data={};}
     let vpak={ //prep vapi response pack object
@@ -57,7 +56,7 @@ server.on('request',(req,res)=>{
       }
     });
     //logr.info.tracker.push(JSON.parse(JSON.stringify(vpak)));
-    if(Object.keys(data).length>0){
+    if(Object.keys(data).length>0){ //does the data have any
       vapi.COREproccess(req,res,vpak,logr).then(
         res=>{console.log(res.pak)}
       );
