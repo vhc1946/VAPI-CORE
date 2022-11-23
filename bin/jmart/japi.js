@@ -87,6 +87,7 @@ var PARSEresponse=(body)=>{
     parsexml(body,(err,result)=>{//parse the body
       let bod = JSON.parse(result['soap:Envelope']['soap:Body'][0]['JonasAPIResponse'][0]['JonasAPIResult']);
       try{bod.data = JSON.parse(bod.data);}catch{}
+      console.log(bod);
       bod.success = true; //body marked for intenrnal use
       if(bod.data.errorsFound==0||bod.data.errorsFound==undefined){ //test for errors *MORE NEEDED HERE
         if(bod.data[bod.data.Template]!=undefined){
