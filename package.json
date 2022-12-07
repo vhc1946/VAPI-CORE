@@ -6,7 +6,8 @@
   "scripts": {
     "ec2": "node ec2test.js",
     "test":"node server.js",
-    "vapi": "nodemon server.js"
+    "vapi": "nodemon server.js",
+    "proxy":"nodemon proxy.js"
   },
   "author": "cmv",
   "license": "ISC",

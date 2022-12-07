@@ -12,7 +12,7 @@ var japi = require('./jmart/japimart.js');
 
 vmart.INITcollections(path.join(__dirname,'../../data/'));
 
-var vapiuser = new UStore(path.join(__dirname,'../store/admin/vapiusers.db'));
+var vapiuser = new UStore(path.join(__dirname,'../../data/store/company/EMPLOYEES/company-users.db'));
 
 var vapipaths = {
   views:null,
@@ -309,7 +309,8 @@ var UserAccess=(req,res,vpak,log)=>{
     log.info.cat='LOGIN';
     vpak.success=true;
     log.info.tracker.push(JSON.parse(JSON.stringify(vpak)));
-    vpak.msg='Auth user';
+    vpak.msg='Auth user :'+'';
+    //sort
     vapiuser.AUTHuser(vpak.data.access).then(
       auth=>{
         clog.LOGitem(clog.newitem({process:'LOGIN',msg:`User Authorization: ${auth}`}));

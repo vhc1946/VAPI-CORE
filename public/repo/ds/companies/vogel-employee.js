@@ -1,6 +1,7 @@
 var aemployee=(e=null)=>{
   if(!e||e==undefined){e={};}
   return{
+    eid:e.eid||'',
     user:e.user||'',
     pswrd:e.pswrd||'',
 

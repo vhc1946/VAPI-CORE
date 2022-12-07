@@ -2,6 +2,18 @@
 var path = require('path');
 var {NEDBconnect}=require('../storage/nedb-connector.js');
 
+
+/*
+  Need to figure a way where connections to a store can be created and stay
+  available for any other request during its life. So if the first connection is
+  still being processed, request from the store through the same connection. If
+  there is nothing qued for a connection it is closed.
+  This is in fear that two request will be sent for a store and two seperate
+  instances of the class are created. Both of the classes would then fight over
+  the same file and cause some of the data to go missing.
+  It is also likely keeping the connections open for longer will speed up the
+  request process when there are a lot of requests at one time.
+*/
 class VAPIStore{
   constructor(storeroot,storename,storemap){
     this.root=storeroot;
@@ -30,8 +42,10 @@ class VAPIStore{
         }
         runner.then(
           result=>{
+
             console.log('Result>',result)
             reciept.result = result;
+            reciept.success = true;
             return res(reciept);
           }
         )
@@ -64,6 +78,7 @@ class VAPIStore{
     return new Promise((res,rej)=>{
       if(!opts.query){return res({num:0,err:'bad options'});} //if query{} then the list is emptied. May want to protect *only for admin*
       if(!opts.multi){opts.multi=true;}
+      if(Object.keys(opts.query).length===0&&!opts.allow){return res({num:0,err:'missing allow when clearing all docs'})}
       return res(db.REMOVEdoc(opts.query,opts.multi));
     });
   }

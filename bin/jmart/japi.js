@@ -89,14 +89,20 @@ var PARSEresponse=(body)=>{
       try{bod.data = JSON.parse(bod.data);}catch{}
       console.log(bod);
       bod.success = true; //body marked for intenrnal use
-      if(bod.data.errorsFound==0||bod.data.errorsFound==undefined){ //test for errors *MORE NEEDED HERE
-        if(bod.data[bod.data.Template]!=undefined){
-          if(bod.data.Option=='download'&&j2vconvert[bod.data.Template]){
-            bod.data['table']=jtableconvert(bod.data.Template,bod.data[bod.data.Template]);
-          }else{bod.data['table']=bod.data[bod.data.Template];}
-          bod.data[bod.data.Template]=undefined;
-        }else{bod.data['table']=[]}
-      }else{
+      try{
+        if(bod.data!=null && bod.data.errorsFound==0||bod.data.errorsFound==undefined){ //test for errors *MORE NEEDED HERE
+          if(bod.data[bod.data.Template]!=undefined){
+            if(bod.data.Option=='download'&&j2vconvert[bod.data.Template]){
+              bod.data['table']=jtableconvert(bod.data.Template,bod.data[bod.data.Template]);
+            }else{bod.data['table']=bod.data[bod.data.Template];}
+            bod.data[bod.data.Template]=undefined;
+          }else{bod.data['table']=[]}
+        }else{
+          try{bod.msg = bod.data.error[0];}
+          catch{bod.msg=bod.message}
+          bod.success = false;
+        }
+      }catch{
         try{bod.msg = bod.data.error[0];}
         catch{bod.msg=bod.message}
         bod.success = false;

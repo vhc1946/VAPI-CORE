@@ -26,9 +26,10 @@ var options={
 
 var server=https.createServer(options);
 server.on('request',(req,res)=>{
+  console.log('request')
   if(req.rawHeaders['Sec-Fetch-Site']!='same-origin'){
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST');
     res.setHeader('Access-Control-Max-Age', 2592000); // 30 days
   }
   let data = '';
