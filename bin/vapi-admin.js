@@ -86,6 +86,9 @@ var ADMINrouter = (task,ask)=>{
       }else{ask.msg='Pack bad format';return res(false)}
       break;
     }
+    case 'JONAS':{
+      waiter =
+    }
     default:{ask.msg='Not an Admin command> '+task; return res(false);}
   }
   })

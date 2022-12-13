@@ -153,6 +153,7 @@ var COREadmin=(req,res,vpak,log)=>{
               break;
             }
             case 'JONAS':{
+              waiter = japi.UPDATEfbook(vpak);
               break;
             }
             case 'COMPANY':{
