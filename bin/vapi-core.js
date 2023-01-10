@@ -51,7 +51,7 @@ var COREproccess=(req,res,vpak,logr)=>{
         case 'API':{
           logr.info.cat="API";
           vpak.msg='Auth data';
-          clog.LOGitem(clog.newitem({process:'CORE',msg:'Recieved API Request'}));
+          //clog.LOGitem(clog.newitem({process:'CORE',msg:'Recieved API Request'}));
           waiter=COREapi(req,res,vpak,logr);
           break;
         }
@@ -78,26 +78,26 @@ var COREproccess=(req,res,vpak,logr)=>{
         default:{//requesting resources
           logr.info.cat="FAIL";
           vpak.msg="Route not Found";
-          clog.LOGitem(clog.newitem({process:'CORE',msg:'Not a route'}));
+          //clog.LOGitem(clog.newitem({process:'CORE',msg:'Not a route'}));
           res.write(JSON.stringify(vpak));
         }
       }
       if(waiter){
         waiter.then(
           pak=>{
-            rlog.LOGitem(logr);
-            clog.LOGitem(clog.newitem({process:'CORE',msg:'Request being ended'}))
+            //rlog.LOGitem(logr);
+            //clog.LOGitem(clog.newitem({process:'CORE',msg:'Request being ended'}))
             res.end();
             return resolve(vpak);
           }
         )
       }else{//worst case
-        rlog.LOGitem(logr);
+        //rlog.LOGitem(logr);
         res.end();
         return resolve({res:res,pak:vpak});
       }
     }else{
-      clog.LOGitem(clog.newitem({process:'CORE Process',msg:'Data Failed Authorization...'}));
+      //clog.LOGitem(clog.newitem({process:'CORE Process',msg:'Data Failed Authorization...'}));
       vpak.success=false;
       log.info.tracker.push(JSON.parse(JSON.stringify(vpak)));
       return resolve({res:res,pak:vpak})
@@ -107,7 +107,7 @@ var COREproccess=(req,res,vpak,logr)=>{
 
 var COREadmin=(req,res,vpak,log)=>{
   return new Promise((resolve,reject)=>{
-    console.log('admin section>data> ',vpak.data)
+    //console.log('admin section>data> ',vpak.data)
     //clog.LOGitem(clog.newitem({process:'API',msg:'Data was Authorized...'}));
     vpak.success=true;
     log.info.access=vpak.data.access;
@@ -201,7 +201,7 @@ var COREadmin=(req,res,vpak,log)=>{
 */
 var RouteVAPI = (res,vpak) =>{
   return new Promise((resolve,reject)=>{
-    clog.LOGitem(clog.newitem({process:'API',msg:vpak}));
+    //clog.LOGitem(clog.newitem({process:'API',msg:vpak}));
     switch(vpak.data.access.request.toUpperCase()){
       case 'PING':{return resolve({body:"...PING"});}
       case 'MART':{return resolve(vmart.ROUTEdatamart(vpak));}
@@ -213,7 +213,7 @@ var RouteVAPI = (res,vpak) =>{
 var COREapi=(req,res,vpak,log)=>{
   return new Promise((resolve,reject)=>{
     console.log('api starting')
-    clog.LOGitem(clog.newitem({process:'API',msg:'API starting...'}));
+    //clog.LOGitem(clog.newitem({process:'API',msg:'API starting...'}));
     /* AUTH request
        Need to ensure that before the request goes on, the data is checked for
        validity. If there is no data the request is likely a resource or page
@@ -227,7 +227,7 @@ var COREapi=(req,res,vpak,log)=>{
       auth=>{
         vpak.success=auth;
         log.info.tracker.push(JSON.parse(JSON.stringify(vpak)));
-        clog.LOGitem(clog.newitem({process:'API',msg:`User ${vpak.data.access.user} Authorization: ${auth}`}));
+        //clog.LOGitem(clog.newitem({process:'API',msg:`User ${vpak.data.access.user} Authorization: ${auth}`}));
         if(auth){//user cleared
           vpak.msg='Fullfill Request'
           RouteVAPI(res,vpak).then(
@@ -306,7 +306,7 @@ var CONNECTconsole=(req,res,vpak,log)=>{
 
 var UserAccess=(req,res,vpak,log)=>{
   return new Promise((resolve,reject)=>{
-    clog.LOGitem(clog.newitem({process:'LOGIN',msg:'User Login...'}));
+    //clog.LOGitem(clog.newitem({process:'LOGIN',msg:'User Login...'}));
     log.info.cat='LOGIN';
     vpak.success=true;
     log.info.tracker.push(JSON.parse(JSON.stringify(vpak)));
@@ -314,7 +314,7 @@ var UserAccess=(req,res,vpak,log)=>{
     //sort
     vapiuser.AUTHuser(vpak.data.access).then(
       auth=>{
-        clog.LOGitem(clog.newitem({process:'LOGIN',msg:`User Authorization: ${auth}`}));
+        //clog.LOGitem(clog.newitem({process:'LOGIN',msg:`User Authorization: ${auth}`}));
         vpak.success=auth;
         res.write(JSON.stringify(vpak));
         return resolve({res:res,pak:vpak});
@@ -325,24 +325,24 @@ var UserAccess=(req,res,vpak,log)=>{
 
 var SERVEresource=(req,res,vpak,log)=>{
   return new Promise((resolve,reject)=>{
-    clog.LOGitem(clog.newitem({process:'RESOURCE',msg:'Request from Public...'}));
+    //clog.LOGitem(clog.newitem({process:'RESOURCE',msg:'Request from Public...'}));
     //log.info.cat="PUB";
     vpak.msg="Get Resource";
     vapiresource.servepublic(req.url,res).then(
       was=>{
         vpak.success=was;
         //log.info.tracker.push(JSON.parse(JSON.stringify(vpak)));
-        clog.LOGitem(clog.newitem({process:'RESOURCE',msg:`Was found: ${was}`}));
+        //clog.LOGitem(clog.newitem({process:'RESOURCE',msg:`Was found: ${was}`}));
         if(was){
           return resolve({res:res,pak:vpak});
         }
         else{
-          clog.LOGitem(clog.newitem({process:'RESOURCE',msg:'Check for page'}));
+          //clog.LOGitem(clog.newitem({process:'RESOURCE',msg:'Check for page'}));
           vapiresource.servecontrol(req.url,res).then(
             con=>{
               vpak.success=con.success;
               //log.info.tracker.push(JSON.parse(JSON.stringify(vpak)));
-              clog.LOGitem(clog.newitem({process:'RESOURCE',msg:`Found page: ${con.success}`}));
+              //clog.LOGitem(clog.newitem({process:'RESOURCE',msg:`Found page: ${con.success}`}));
               return resolve({res:res,pak:vpak});
             }
           );

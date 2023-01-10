@@ -35,7 +35,7 @@ server.on('request',(req,res)=>{
   /////////////////////////////////////////
   if(req.url.includes('~')){ //correct to public
     req.url = '/'+req.url.split('~')[1];
-    console.log(req.url);
+    //console.log(req.url);
   }
   /////////////////////////////////////////
 
