@@ -1,5 +1,6 @@
 
 var path = require('path');
+var http = require('http');
 var url = require('url');
 var fs = require('fs');
 var {UStore} = require('./admin/vapi-user-store.js');
@@ -9,6 +10,118 @@ var {Logger}=require('./vapi-logger.js');
 var vapiresource = require('./resources/vapi-resources.js');
 var vmart = require('./datamart/vapi-datamart.js');
 var japi = require('./jmart/japimart.js');
+
+var vroutes = {
+  'PING':{
+    request:()=>{return {body:'...PING'}}
+  },
+  'MART':{
+    request:(res,pak)=>{
+      return(VAPIrequester(this.res,this.pak,{
+        hostname:'127.0.0.1',
+        port:'4000',
+        path:'/',
+        method:'PUT',
+        header:{
+          'Content-Type':'application/json'
+        }
+      }))
+    }
+  },
+  'JAPI':{
+    request:(res,pak)=>{
+    return(VAPIrequester(this.res,this.pak,{
+      hostname:'127.0.0.1',
+      port:'5050',
+      path:'/',
+      method:'PUT',
+      header:{
+        'Content-Type':'application/json'
+      }
+    }))
+  }
+  }
+}
+
+/* VAPI REQUEST: Should help manage http/https request / response
+
+  Intakes information passed from the server and starts trying to resolve the
+  request of the 'pak'. Upon creation, the item is stamped and the request is
+  attempted to be fullfiled. After creation, this.handler.then() can be called
+  to watch for return of the request.
+
+  constructor
+
+  this.
+  - req - http server request
+  - res - http server response
+  - pak - packet describing the request
+  - log - log to track request activity
+  - routes - object describing abailable routes
+  - resolved - (BOOLEAN) if the request is completed
+
+
+*/
+class VAPIrequest{
+  constructor({
+    req,
+    res,
+    data,
+    routes=vroutes
+  }){
+    this.req = req;
+    this.res = res;
+    this.info = {
+      url:this.req.url,
+      route:this.req.url.split('/')[1]!=undefined?this.req.url.split('/')[1].toUpperCase(): '',
+      cip:this.req.connection.remoteAddress,
+    };
+
+    this.pak = {
+      msg:'Recieved Request',
+      success:true,
+      body:{},
+      data:data
+    };
+
+    this.log = {
+      timein:new Date().getTime(),
+      timeout:null,
+      track:[]
+    };
+    this.LOGactivity();
+
+    this.routes = routes;
+    this.resolved = false;
+  }
+
+  handler(){}
+  router(){
+    return new Promise((resolve,reject)=>{
+      if(this.)
+      let route = this.pak.data.access.request;
+      if(this.routes[route!=undefined]){//is a route
+        return resolve(this.routes[route](this.req,this.pak));
+      }else{this.pak.msg='NO Route found';return resolve(false);}
+    });
+  }
+
+  LOGactivity(msg='',final=false){
+    this.pak.msg = msg;
+    this.log.track.push(JSON.parse(JSON.stringify(this.pak)));
+    if(final){
+      this.log.timeout = new Date().getTime();
+    }
+  }
+  AUTHdata(data){
+    if(data!=''&&data!=undefined){
+      if(data.access!=undefined){
+          //check packs based on request
+          return true;
+      }else{return false;}
+    }else{return false;}
+  }
+}
 
 vmart.INITcollections(path.join(__dirname,'../../data/'));
 
@@ -41,7 +154,9 @@ var SETUPlogs=()=>{
   return rlog;
 }
 
-var COREproccess=(req,res,vpak,logr)=>{
+/* Core Process
+*/
+var COREprocess=(req,res,vpak,logr)=>{
   return new Promise((resolve,reject)=>{
     let url1 = req.url.split('/')[1]!=undefined?req.url.split('/')[1].toUpperCase(): '';
     let waiter = null;
@@ -52,24 +167,25 @@ var COREproccess=(req,res,vpak,logr)=>{
           logr.info.cat="API";
           vpak.msg='Auth data';
           clog.LOGitem(clog.newitem({process:'CORE',msg:'Recieved API Request'}));
-          waiter=COREapi(req,res,vpak,logr);
-          break;
+          return new VAPIrequest({
+            COREapi(req,res,vpak,logr)
+          });
         }
-        case 'ADMIN':{
+        case 'ADMIN':{ //portal for admin
           logr.info.cat="ADMIN";
           vpak.msg='requesting as administrator';
           console.log('requesting admin...')
           waiter=COREadmin(req,res,vpak,logr);
           break;
         }
-        case 'CONSOLE':{
+        case 'CONSOLE':{ //'console' stream
           logr.info.cat="CONSOLE";
           vpak.msg='console';
           //clog.LOGitem(clog.newitem({process:'CORE',msg:'Recieved Console Request'}));
           waiter=CONNECTconsole(req,res,vpak,logr);
           break;
         }
-        case 'LOGIN':{
+        case 'LOGIN':{ //'simple login'
           logr.info.cat="LOGIN";
           clog.LOGitem(clog.newitem({process:'CORE',msg:'Recieved Login Request'}));
           waiter=UserAccess(req,res,vpak,logr);
@@ -103,7 +219,7 @@ var COREproccess=(req,res,vpak,logr)=>{
       return resolve({res:res,pak:vpak})
     }
   });
-  }
+}
 
 var COREadmin=(req,res,vpak,log)=>{
   return new Promise((resolve,reject)=>{
@@ -186,6 +302,7 @@ var COREadmin=(req,res,vpak,log)=>{
   });
 }
 
+
 /* Acts as a router for the api
 
   PASSED:
@@ -204,12 +321,54 @@ var RouteVAPI = (res,vpak) =>{
     clog.LOGitem(clog.newitem({process:'API',msg:vpak}));
     switch(vpak.data.access.request.toUpperCase()){
       case 'PING':{return resolve({body:"...PING"});}
-      case 'MART':{return resolve(vmart.ROUTEdatamart(vpak));}
-      case 'JAPI':{return resolve(japi.GETj2vtable(vpak,true));}
+      case 'MART':{return resolve(VAPIrequester(res,vpak,{
+        hostname:'127.0.0.1',
+        port:'4000',
+        path:'/',
+        method:'PUT',
+        header:{
+          'Content-Type':'application/json'
+        }
+      }));}//case 'MART':{return resolve(vmart.ROUTEdatamart(vpak));}
+      case 'JAPI':{return resolve(VAPIrequester(res,vpak,{
+        port:'5050',
+        path:'/',
+        method:'PUT',
+        header:{
+          'Content-Type':'application/json'
+        }
+      }));}//case 'JAPI':{return resolve(japi.GETj2vtable(vpak,true));}
       default:{vpak.msg='API Command not Found';return resolve(false);}
     }
   });
 }
+
+var VAPIrequester=(res,vpak,{
+  hostname:'127.0.0.1',
+  port:'5000',
+  path:'/',
+  method:'GET',
+  header:{
+    'Content-Type':'application/json'
+  }
+})=>{ //used to request from another server
+  return new Promise((resolve,reject)=>{
+    console.log('Request ',vpak);
+    const vres = http.request(options,(res)=>{
+      let data='';
+      console.log('Server has responded');
+      res.on('data',chunk=>{data+=chunk;});
+      res.on('end',()=>{
+        console.log(data);
+        try{data=JSON.parse(data);}catch{data={};}
+      });
+      return resolve(true);
+    });
+    vres.write(JSON.stringify(vpak));
+    vres.end();
+  });
+}
+
 var COREapi=(req,res,vpak,log)=>{
   return new Promise((resolve,reject)=>{
     console.log('api starting')
@@ -248,6 +407,8 @@ var COREapi=(req,res,vpak,log)=>{
     );
   })
 }
+
+
 
 var CONNECTconsole=(req,res,vpak,log)=>{
   return new Promise((resolve,reject)=>{
@@ -367,5 +528,6 @@ module.exports={
   COREproccess,
   SERVEresource,
   SETUPpaths,
-  SETUPlogs
+  SETUPlogs,
+  VAPIrequest
 }
