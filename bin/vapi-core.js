@@ -7,7 +7,6 @@ var {UStore} = require('./admin/vapi-user-store.js');
 var {NEDBconnect} =require('./storage/nedb-connector.js');
 var {Logger}=require('./vapi-logger.js');
 
-var vapiresource = require('./resources/vapi-resources.js');
 var vmart = require('./datamart/vapi-datamart.js');
 var japi = require('./jmart/japimart.js');
 
@@ -482,35 +481,6 @@ var UserAccess=(req,res,vpak,log)=>{
       }
     );
   });
-}
-
-var SERVEresource=(req,res,vpak,log)=>{
-  return new Promise((resolve,reject)=>{
-    clog.LOGitem(clog.newitem({process:'RESOURCE',msg:'Request from Public...'}));
-    //log.info.cat="PUB";
-    vpak.msg="Get Resource";
-    vapiresource.servepublic(req.url,res).then(
-      was=>{
-        vpak.success=was;
-        //log.info.tracker.push(JSON.parse(JSON.stringify(vpak)));
-        clog.LOGitem(clog.newitem({process:'RESOURCE',msg:`Was found: ${was}`}));
-        if(was){
-          return resolve({res:res,pak:vpak});
-        }
-        else{
-          clog.LOGitem(clog.newitem({process:'RESOURCE',msg:'Check for page'}));
-          vapiresource.servecontrol(req.url,res).then(
-            con=>{
-              vpak.success=con.success;
-              //log.info.tracker.push(JSON.parse(JSON.stringify(vpak)));
-              clog.LOGitem(clog.newitem({process:'RESOURCE',msg:`Found page: ${con.success}`}));
-              return resolve({res:res,pak:vpak});
-            }
-          );
-        }
-      }
-    );
-})
 }
 
 ////////////////////////////////////////////////////////////////////////////////
