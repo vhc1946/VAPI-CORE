@@ -1,7 +1,5 @@
 
 
-
-
 var servepublic = (url,res)=>{
   return new Promise((resolve,reject)=>{
     var contype = '';
